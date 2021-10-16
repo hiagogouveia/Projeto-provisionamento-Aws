@@ -1,15 +1,19 @@
 variable "namesMap" {
-  type = map(any)
+  type = map(string)
   default = {
-    "ubuntuServer20-04"   = "ami-00399ec92321828f5"
-    "tipoDaInstancia"     = "t2.micro"
-    "nomeDaChaveDeAcesso" = "terraform-aws"
+    "webCadastro"            = "ami-002a6c3decab778fc"
+    "tipoDaInstancia"        = "t2.micro"
+    "nomeDaChaveDeAcesso"    = "terraform-aws"
+    "securityGroupIdDefault" = "sg-ac4e72e1"
   }
 }
 
-# variable "namesMap" {
-#   type = list(any)
-#   default = {
-#     ["170.150.242.221/32,"]
-#   }
-# }
+variable "cdirs_acesso_remoto" {
+  type    = list(string)
+  default = ["170.150.241.232/32", "170.150.241.232/32"]
+}
+
+variable "id_subnet_default" {
+  type    = list(string)
+  default = ["170.150.241.232/32", "170.150.241.232/32"]
+}
