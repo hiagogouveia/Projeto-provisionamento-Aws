@@ -1,1 +1,4 @@
-Read.me
+Esse projeto provisiona automaticamente uma infra na AWS que contem:
+- Grupo de segurança;
+- Escalamento automático;
+- Load Balancer
