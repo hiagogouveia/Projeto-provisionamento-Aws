@@ -1,0 +1,44 @@
+jobs:
+
+- job: job1
+  displayName: 'Provisionando infra no Azure'
+
+  steps:
+    - script: echo "Terraform Init"
+      displayName: "Terra Init"
+
+
+
+    - script: echo "Terraform Plan"
+      displayName: "Terra plan"    
+    # - task: TerraformInstaller@0
+    #   inputs:
+    #     terraformVersion: 'latest'
+
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'aws'
+        command: 'init'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/provisiona-infra'
+        backendServiceAWS: 'aws-hiago'
+        backendAWSBucketName: 'backend-tf-hiago'
+        backendAWSKey: 'azure/terraform.tfstate'
+   
+
+    # - script: echo "Terraform Plan"
+    #   displayName: "Terra plan"    
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'aws'
+        command: 'plan'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/provisiona-infra'
+        environmentServiceNameAWS: 'aws-hiago'
+
+    - script: echo "Terraform Apply"
+      displayName: "Terra apply"    
+    - task: TerraformTaskV2@2
+      inputs:
+        provider: 'aws'
+        command: 'apply'
+        workingDirectory: '$(System.DefaultWorkingDirectory)/provisiona-infra'
+        environmentServiceNameAWS: 'aws-hiago'
