@@ -1,0 +1,83 @@
+---
+Resources:
+  
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-002068ed284fb165b
+      InstanceType: t2.micro
+      SubnetId: subnet-0af1adea62f5220e2
+      SecurityGroupIds: 
+        - Ref: 'SGHiago'
+      Tags:
+        -
+          Key: tr:service-name
+          Value: ADOAgentPool
+        -
+          Key: tr:project-name
+          Value: DominioWeb
+
+  SGHiago:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: 'Libera porta 22'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: '22'
+          ToPort: '22'
+          CidrIp: 0.0.0.0/0
+      VpcId: vpc-062f99603c6542693
+  
+
+  # aws cloudformation deploy --template-file main.yaml --stack-name ec2-sg-tag
+  # aws cloudformation delete-stack --stack-name ec2-sg-tag
+
+  # VPCHiago:
+  #   Type: "AWS::EC2::VPC"
+  #   Properties:
+  #     CidrBlock: 10.0.0.0/16
+  #     EnableDnsSupport: 'true'
+  #     EnableDnsHostnames: 'true'
+  #     Tags:
+  #       - Key: name
+  #         Value: a203994-ado-nonprod-asg-v1
+
+  # PublicSubnetA:
+  #   Type: "AWS::EC2::Subnet"
+  #   Properties:
+  #     CidrBlock: 10.0.1.0/24
+  #     VpcId: !Ref VPCHiago
+
+
+  # PublicSubnetB:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     VpcId: !Ref VPCHiago
+  #     CidrBlock: 10.0.2.0/24
+
+  # PrivateSubnetA:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     VpcId: !Ref VPCHiago
+  #     CidrBlock: 10.0.3.0/24
+
+  # PrivateSubnetB:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     VpcId: !Ref VPCHiago
+  #     CidrBlock: 10.0.4.0/24
+        
+
+
+# Ec2 com SG
+
+# Tags:
+# aws:autoscaling:groupName   	  a203994-ado-nonprod-asg-v1
+# tr:resource-owner	              Dominio-DEVOPS-Platform@thomsonreuters.com
+# tr:project-name	                DominioWeb
+# tr:environment-type	            CI
+# aws:ec2launchtemplate:version	  14
+# Name	                          a203994-ado-nonprod-asg-v1
+# aws:ec2launchtemplate:id	      lt-07e8fbf1f4976c2db
+# tr:application-asset-insight-id	203994
+# tr:service-name	                ADOAgentPool
