@@ -92,3 +92,6 @@ Resources:
         -
           Key: tr:environment-type
           Value: TESTE
+          
+# aws cloudformation deploy --template-file mains.yaml --stack-name ec2-sg-teste-hiago
+# aws cloudformation delete-stack --stack-name ec2-sg-tag
