@@ -1,83 +1,94 @@
 ---
+Parameters:
+  InstanceType:
+    Description: WebServer EC2 instance type
+    Type: String
+    Default: t3.small
+    AllowedValues: [t2.nano, t2.micro, t2.small, t2.medium, t2.large, t2.xlarge, t2.2xlarge,
+      t3.nano, t3.micro, t3.small, t3.medium, t3.large, t3.xlarge, t3.2xlarge,
+      m4.large, m4.xlarge, m4.2xlarge, m4.4xlarge, m4.10xlarge,
+      m5.large, m5.xlarge, m5.2xlarge, m5.4xlarge,
+      c5.large, c5.xlarge, c5.2xlarge, c5.4xlarge, c5.9xlarge,
+      g3.8xlarge,
+      r5.large, r5.xlarge, r5.2xlarge, r5.4xlarge, r3.12xlarge,
+      i3.xlarge, i3.2xlarge, i3.4xlarge, i3.8xlarge,
+      d2.xlarge, d2.2xlarge, d2.4xlarge, d2.8xlarge]
+  AMI:
+    Type: String
+    Default: ami-002068ed284fb165b
+    Description: Linux AWS.
+  Subnet:
+    Type: String
+    Default: subnet-0af1adea62f5220e2
+    Description: subnet padrao
+  Vpc:
+    Type: String
+    Default: vpc-062f99603c6542693
+    Description: Vpc padrao
+  SSHLocation:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Default: 0.0.0.0/0
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.  
+  EC2Tags:
+    Description: Tags to add to the EC2 Instance
+    Type: CommaDelimitedList
+    Default: "ado-nonprod-hiago,SRV0001-DW-TESTE-HIAGO,DominioWeb-TESTE"
+
 Resources:
   
   Instance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-002068ed284fb165b
-      InstanceType: t2.micro
-      SubnetId: subnet-0af1adea62f5220e2
+      ImageId: !Ref AMI
+      InstanceType: !Ref 'InstanceType'
+      SubnetId: !Ref 'Subnet'
       SecurityGroupIds: 
-        - Ref: 'SGHiago'
+        - Ref: 'DWTestSecurityGroup'
       Tags:
         -
           Key: tr:service-name
-          Value: ADOAgentPool
+          Value: !Select [ 0, !Ref EC2Tags ]
+        -
+          Key: Name
+          Value: !Select [ 1, !Ref EC2Tags ]
         -
           Key: tr:project-name
-          Value: DominioWeb
+          Value: !Select [ 2, !Ref EC2Tags ]
+        -
+          Key: tr:resource-owner
+          Value: Dominio-DEVOPS-Platform@thomsonreuters.com
+        -
+          Key: tr:environment-type
+          Value: TESTE
 
-  SGHiago:
+  DWTestSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: 'Libera porta 22'
+      GroupName: 'teste-ado-nonprod'
+      GroupDescription: 'ado-nonprod'
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: '22'
           ToPort: '22'
-          CidrIp: 0.0.0.0/0
-      VpcId: vpc-062f99603c6542693
-  
-
-  # aws cloudformation deploy --template-file main.yaml --stack-name ec2-sg-tag
-  # aws cloudformation delete-stack --stack-name ec2-sg-tag
-
-  # VPCHiago:
-  #   Type: "AWS::EC2::VPC"
-  #   Properties:
-  #     CidrBlock: 10.0.0.0/16
-  #     EnableDnsSupport: 'true'
-  #     EnableDnsHostnames: 'true'
-  #     Tags:
-  #       - Key: name
-  #         Value: a203994-ado-nonprod-asg-v1
-
-  # PublicSubnetA:
-  #   Type: "AWS::EC2::Subnet"
-  #   Properties:
-  #     CidrBlock: 10.0.1.0/24
-  #     VpcId: !Ref VPCHiago
-
-
-  # PublicSubnetB:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     VpcId: !Ref VPCHiago
-  #     CidrBlock: 10.0.2.0/24
-
-  # PrivateSubnetA:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     VpcId: !Ref VPCHiago
-  #     CidrBlock: 10.0.3.0/24
-
-  # PrivateSubnetB:
-  #   Type: AWS::EC2::Subnet
-  #   Properties:
-  #     VpcId: !Ref VPCHiago
-  #     CidrBlock: 10.0.4.0/24
-        
-
-
-# Ec2 com SG
-
-# Tags:
-# aws:autoscaling:groupName   	  a203994-ado-nonprod-asg-v1
-# tr:resource-owner	              Dominio-DEVOPS-Platform@thomsonreuters.com
-# tr:project-name	                DominioWeb
-# tr:environment-type	            CI
-# aws:ec2launchtemplate:version	  14
-# Name	                          a203994-ado-nonprod-asg-v1
-# aws:ec2launchtemplate:id	      lt-07e8fbf1f4976c2db
-# tr:application-asset-insight-id	203994
-# tr:service-name	                ADOAgentPool
+          CidrIp: !Ref 'SSHLocation'
+      VpcId: !Ref Vpc
+      Tags:
+        -
+          Key: tr:service-name
+          Value: TESTE-Hiago-nonprod
+        -
+          Key: Name
+          Value: SG-Teste-Hiago-nonprod
+        -
+          Key: tr:project-name
+          Value: DominioWeb
+        -
+          Key: tr:resource-owner
+          Value: Dominio-DEVOPS-Platform@thomsonreuters.com
+        -
+          Key: tr:environment-type
+          Value: TESTE
